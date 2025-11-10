@@ -34,11 +34,19 @@ pip install -r requirements.txt
 
 ### 2. Setup Dataset
 
+**Important**: The `babylm_data/` folder is not included in version control due to large file sizes. You need to generate it locally.
+
 ```bash
 python babylm_data.py
 ```
 
 **Note**: You need a Hugging Face token to access the BabyLM dataset. See [Dataset Setup](#dataset-babylm) for details.
+
+This will create:
+- `babylm_data/babylm_train.npy` (~600 MB)
+- `babylm_data/babylm_val.npy` (~60 MB)
+- `babylm_data/babylm_test.npy` (~8 MB)
+- `babylm_data/test_examples.json` (~12 MB)
 
 ### 3. Train Model
 
