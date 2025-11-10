@@ -43,10 +43,10 @@ python babylm_data.py
 **Note**: You need a Hugging Face token to access the BabyLM dataset. See [Dataset Setup](#dataset-babylm) for details.
 
 This will create:
-- `babylm_data/babylm_train.npy` (~600 MB)
+- `babylm_data/babylm_train.npy` (~260 MB)
 - `babylm_data/babylm_val.npy` (~60 MB)
 - `babylm_data/babylm_test.npy` (~8 MB)
-- `babylm_data/test_examples.json` (~12 MB)
+- `babylm_data/test_examples.json` (~350 MB)
 
 ### 3. Train Model
 
