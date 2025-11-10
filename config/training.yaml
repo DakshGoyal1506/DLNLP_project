@@ -1,0 +1,120 @@
+# Production Training Configuration - Optimized for A6000 on Linux
+# Maximum performance with all optimizations enabled
+
+experiment_name: "training"
+
+# Model architecture
+model:
+  n_layer: 12
+  n_embd: 768
+  n_head: 12
+  n_head_list: [12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]
+  block_size: 1024
+  vocab_size: 50304
+
+# Training hyperparameters
+training:
+  batch_size: 8                  # Optimized for A6000 (48GB)
+  sequence_length: 1024
+  total_batch_size: 524288          # ~0.5M tokens per step
+  max_lr: 0.0006
+  min_lr: 0.00006
+  warmup_steps: 715
+  max_steps: 19073
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+  dropout: 0.0
+  lr_schedule: "cosine"
+  optimizer: "AdamW"
+  betas: [0.9, 0.95]
+  eps: 1.0e-8
+  fused: true
+
+# Data
+data:
+  data_dir: "./babylm_data"
+  train_file: "babylm_train.npy"
+  val_file: "babylm_val.npy"
+  test_file: "babylm_test.npy"
+  test_examples_file: "test_examples.json"
+  pin_memory: true
+  num_workers: 0
+  prefetch_factor: 2
+
+# Execution
+execution:
+  train: true
+  test: false
+  use_compile: true                 # Enabled for Linux
+  compile_mode: "max-autotune"
+
+# Evaluation - Reduced overhead for speed
+evaluation:
+  val_interval: 1000                # Validate less frequently
+  val_steps: 5                      # Fewer validation batches
+  test_steps: 5
+  checkpoint_interval: 5000
+  max_checkpoints_to_keep: 3
+  generate_samples: false           # Disabled for max speed
+  sample_interval: 5000
+  num_samples: 2
+  sample_length: 32
+  top_k: 50                         # Top-k sampling parameter
+
+# Output
+output:
+  exp_dir: "./exp"
+  log_dir: "./log"
+  attention_dir: "./attention_outputs"
+
+# Device - Optimized for A6000
+device:
+  device: "auto"
+  gpu_id: null                      # Use --gpu flag or CUDA_VISIBLE_DEVICES
+  seed: 1337
+  dtype: "bfloat16"                 # Best for A6000
+  enable_tf32: true                 # TF32 acceleration
+  enable_cudnn_benchmark: true
+  cuda_launch_blocking: false
+  gradient_checkpointing: false
+  empty_cache_interval: 0
+
+# Checkpoint
+checkpoint:
+  save_best: true
+  save_final: true
+  save_optimizer: true
+  load_checkpoint: null
+  resume_training: false
+
+# Testing
+testing:
+  checkpoint_path: "model_best.pt"
+  full_test_eval: true
+  generate_samples: true
+  num_test_samples: 10
+  test_sample_length: 512
+  top_k: 50                         # Top-k sampling for test generation
+  test_prompts:
+    - "Once upon a time,"
+    - "The little boy"
+    - "In the garden,"
+    - "She looked at the"
+    - "They went to the"
+  visualize_attention: true
+  max_seq_len_viz: 50
+  attention_plot_format: "png"
+  plot_dpi: 150
+  save_attention_matrices: false
+
+# Logging
+logging:
+  log_interval: 10                  # Log less frequently for speed
+  verbose: true
+  log_gradients: false
+  log_learning_rate: true
+  log_tokens_per_sec: true
+  use_tensorboard: false
+  use_wandb: false
+  wandb_project: null
+  wandb_run_name: null
